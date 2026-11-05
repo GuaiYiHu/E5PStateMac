@@ -1,0 +1,17 @@
+{
+  "version": "0.4.0",
+  "target_build": "25G332",
+  "target_kernel_uuid": "28267FD5-3E1E-3686-8A1C-E73E2466FCFB",
+  "artifacts": {
+    "control": {
+      "binary_sha256": "7a1ed9a7f4143c3f77c979dbbb7306955973cd7a8da3237a0923fd617230b6c3",
+      "runtime_status": "Single-target short test passed",
+      "zip_sha256": "bef5b9ab6da7550d5610ca7ab2ba56c2e953e417c3efe7215e877b135675b25c"
+    },
+    "observer": {
+      "binary_sha256": "5c2cc1d1f014c1468ca7f3bbb25ba0332cd831bbe43de8bc2ab85b72d25302e2",
+      "runtime_status": "Build/static checks passed; 0.4.0 observer runtime not tested",
+      "zip_sha256": "b92a960ee5ddcb1fe2ae66cd2ce4e08167094a86d8696f5bb01d436e683fb29a"
+    }
+  }
+}

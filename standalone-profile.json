@@ -1,0 +1,33 @@
+{
+  "kernel_sha256": "a91aad0da9d0a2f545c06859524bb048f4e2e392e46aa12da9fabe652081be53",
+  "kernel_uuid": "28267fd53e1e36868a1ce73e2466fcfb",
+  "build": "25G332",
+  "darwin": "25.6.0",
+  "base": "0xffffff8000200000",
+  "functions": {
+    "writer": {
+      "address": "0xffffff8000406c80",
+      "length": 736,
+      "fnv1a64": "0xddb3c872eaca5ea3",
+      "sha256": "96e137051cfc3c6f58caed10f049922a3d7486d4ebb508269b8e8a68247ee69e"
+    },
+    "timer": {
+      "address": "0xffffff80004070d0",
+      "length": 928,
+      "fnv1a64": "0x80012604ac9ef8e2",
+      "sha256": "d82bec2dbc9d2899ccb4ecebe20837454d013c4fc711d9cd1af26fe50d95ae38"
+    },
+    "urgency": {
+      "address": "0xffffff80004079b0",
+      "length": 5728,
+      "fnv1a64": "0xda381c15a400a2a5",
+      "sha256": "05c7ccb68a73e968c3b398dc01bcc8ca5b3d903dc89bc09481e0ea14b339cf1c"
+    },
+    "deadline": {
+      "address": "0xffffff80004070a0",
+      "length": 48,
+      "fnv1a64": "0x28bceac8d0160ddd",
+      "sha256": "6ee8aa312f7b6b01013ca9618d86561cdb132a534a7777e5e5d33e401eb88b13"
+    }
+  }
+}

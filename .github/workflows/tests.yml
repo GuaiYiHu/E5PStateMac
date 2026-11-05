@@ -1,0 +1,19 @@
+name: Policy tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  portable-policy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Compile and run portable policy regressions
+        run: python3 tests/run_tests.py
+      - name: Check Python syntax
+        run: python3 -m py_compile build.py kc_profile.py tests/*.py
