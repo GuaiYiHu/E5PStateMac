@@ -1,0 +1,59 @@
+{
+  "kernel_uuid": "747934e9fd0136ab8e9706a578ab22f9",
+  "kernel_sha256": "6f4a2b3811ab220464582e7d51bcf46551f4846de9c71205b11d1b124b85bc10",
+  "boot_kc_sha256": "ddd9016e225a61ebfd4f04b02a00937262f26690c57a928613e08506978c81be",
+  "boot_kc_uuid": "e410b473b3b87f2fcc8684d662228c2c",
+  "kernel_fileset_offset": 950272,
+  "functions": {
+    "writer": {
+      "address": "0xffffff8000551870",
+      "length": 736,
+      "sha256": "44a9350572bf9226abec642e56262f0ef640dc2397fc95a818ab6a4734af56de",
+      "fnv1a64": "0xf1f91f7a5eeed25c"
+    },
+    "timer": {
+      "address": "0xffffff8000551cc0",
+      "length": 928,
+      "sha256": "c9f9ef3edeefec9880297b4701f3e013c27835ce323b0ba71c2b19b440934416",
+      "fnv1a64": "0x14dcf81363c3b3a8"
+    },
+    "urgency": {
+      "address": "0xffffff80005525a0",
+      "length": 5696,
+      "sha256": "d82c5d4ace952a06deb8e25568e88ec40118ded7c77a049c406d08258070da19",
+      "fnv1a64": "0x50b5446de1e52e1f"
+    },
+    "deadline": {
+      "address": "0xffffff8000551c90",
+      "length": 48,
+      "sha256": "290e196151b0f6969a1fdfec5e2598e2f4993c944807a2ef2ddc860258c3660d",
+      "fnv1a64": "0x554f3d288399ef6f"
+    }
+  },
+  "relocation_proofs": {
+    "writer": {
+      "only_explained_address_relocations": true,
+      "relocated_operands": 19,
+      "changed_bytes": 38,
+      "unchanged_short_prologue": true
+    },
+    "timer": {
+      "only_explained_address_relocations": true,
+      "relocated_operands": 20,
+      "changed_bytes": 40,
+      "unchanged_short_prologue": true
+    },
+    "urgency": {
+      "only_explained_address_relocations": true,
+      "relocated_operands": 106,
+      "changed_bytes": 213,
+      "unchanged_short_prologue": true
+    },
+    "deadline": {
+      "only_explained_address_relocations": true,
+      "relocated_operands": 1,
+      "changed_bytes": 2,
+      "unchanged_short_prologue": true
+    }
+  }
+}

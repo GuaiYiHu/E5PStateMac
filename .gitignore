@@ -4,6 +4,7 @@ __pycache__/
 build/
 build-control/
 build-shadow/
+build-*/
 validation/
 *.o
 *.dSYM/

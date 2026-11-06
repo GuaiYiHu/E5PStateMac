@@ -19,7 +19,10 @@ int main(int argc,char **argv) {
     auto shared=native;
     const uint8_t jump[]={0xE9,0x21,0xEB,0x36,0x05};
     for (unsigned i=0;i<5;++i) shared[i]=jump[i];
+#ifndef E5_PROFILE_SEQUOIA_24H232
     assert(e5mac::fingerprint(shared.data(),shared.size())==0xCBE6CE30239AA3A0ULL);
+#endif
+    assert(e5mac::fingerprint(shared.data(),shared.size())!=profile::UrgencyFingerprint);
     result=e5mac::validateUrgencyBody(shared.data(),shared.size(),profile::UrgencyFingerprint);
     assert(result.valid && result.routed && result.normalized==profile::UrgencyFingerprint);
     for (size_t index:{size_t(5),size_t(100),shared.size()-1}) {

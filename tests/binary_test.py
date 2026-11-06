@@ -9,6 +9,8 @@ import sys
 import plistlib
 
 ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT))
+from targets import select
 bundle=Path(sys.argv[1]) if len(sys.argv)>1 else ROOT/'build/E5PStateMac.kext'
 binary=bundle/'Contents/MacOS/E5PStateMac'
 header=struct.unpack('<8I',binary.read_bytes()[:32]);assert header[0]==0xfeedfacf and header[1]==0x01000007 and header[3]==11
@@ -23,8 +25,18 @@ for forbidden in ('_pmKextRegister','_pmUnRegister','_mp_rendezvous','_wrmsr','_
 assert '_rdmsr_carefully' in imports and 'routeMultipleShort' in imports and '_lilu' in imports
 assert not re.search(r'\bwrmsr\b',assembly),'Only the original native writer may issue the hardware write'
 subprocess.run(['/usr/bin/codesign','--verify','--strict',str(bundle)],check=True)
-shadow=plistlib.loads((bundle/'Contents/Info.plist').read_bytes()).get('E5ShadowOnlyBuild') is True
-guarded=plistlib.loads((bundle/'Contents/Info.plist').read_bytes()).get('E5GuardedControlBuild') is True
+info=plistlib.loads((bundle/'Contents/Info.plist').read_bytes())
+shadow=info.get('E5ShadowOnlyBuild') is True
+guarded=info.get('E5GuardedControlBuild') is True
+if 'E5TargetProfile' in info:
+    _,target=select(info['E5TargetProfile'])
+    assert info['E5TargetBuild']==target['build']
+    for obj in ('adapter.o','module.o','plugin.o'):
+        path=bundle.parent/obj
+        if path.exists():
+            commands=subprocess.check_output(['xcrun','otool','-l',str(path)],text=True)
+            assert re.search(r'\bminos\s+'+re.escape(target['deployment'])+r'\s',commands)
+    assert info['E5TargetBuild'].encode()+b'\0' in binary.read_bytes()
 assert shadow != guarded
 assert 'verifyWrite' in symbols if guarded else 'verifyWrite' not in symbols
 if shadow:

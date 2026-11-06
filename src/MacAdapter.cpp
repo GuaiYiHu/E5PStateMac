@@ -311,7 +311,7 @@ static bool uuidMatches(uintptr_t address) {
 static void patch(void *,KernelPatcher &patcher) {
     diagnostics.kernelMajor=getKernelVersion();diagnostics.kernelMinor=getKernelMinorVersion();
     for (auto &error:diagnostics.errors) error=-1;
-    if (diagnostics.kernelMajor!=KernelVersion::Tahoe || diagnostics.kernelMinor!=6) {
+    if (diagnostics.kernelMajor!=profile::KernelMajor || diagnostics.kernelMinor!=profile::KernelMinor) {
         setStatus("unsupported-kernel-version");return;
     }
     if (!identify()) return;
@@ -369,7 +369,7 @@ static const char *offArguments[]={"-e5pmoff"};
 static const char *debugArguments[]={"-e5pmdbg"};
 PluginConfiguration ADDPR(config)={
     "E5PStateMac",parseModuleVersion(xStringify(MODULE_VERSION)),LiluAPI::AllowNormal,
-    offArguments,1,debugArguments,1,nullptr,0,KernelVersion::Tahoe,KernelVersion::Tahoe,
+    offArguments,1,debugArguments,1,nullptr,0,static_cast<KernelVersion>(profile::KernelMajor),static_cast<KernelVersion>(profile::KernelMajor),
     []() {
 #ifdef E5_SHADOW_ONLY
         int requested=1;
@@ -405,8 +405,9 @@ bool E5PStateMac::start(IOService *provider) {
     adapter::store(adapter::warmupStartNs,adapter::nowNs());
     if (adapter::load(adapter::hooks)) adapter::setStatus("observing");
     setProperty("Version",xStringify(MODULE_VERSION));setProperty("SupportedBuild",profile::Build);
+    setProperty("TargetProfile",profile::Target);
     setProperty("ProfileSource","BootKernelExtensions.kc");
-    setProperty("BootKCSHA256Expected","96c12f421a8e99580b5015dfd39877df38ecde9b9e056b8ccd28f15847bca35c");
+    setProperty("BootKCSHA256Expected",profile::BootKCSHA256);
 #ifdef E5_SHADOW_ONLY
     setProperty("ShadowOnlyBuild",kOSBooleanTrue);
 #else

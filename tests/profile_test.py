@@ -4,14 +4,19 @@ from pathlib import Path
 import json
 import re
 import sys
+import argparse
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from kc_profile import audit
 from kc_profile import CACHE,MachO
-expected=json.loads((ROOT/'kernel-profile.json').read_text())
-actual=audit()
+from targets import TARGETS, select
+parser=argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--target',choices=TARGETS)
+target_name,target=select(parser.parse_args().target)
+expected=json.loads(target['boot'].read_text())
+actual=audit(target_name)
 assert actual==expected,'Profile differs from independently audited pinned boot KC'
-header=(ROOT/'src/Profile.hpp').read_text()
+header=target['header'].read_text()
 for key,record in actual['functions'].items():
     name=key.capitalize()+'Fingerprint'
     match=re.search(name+r'=(0x[0-9a-f]+)ULL;',header)
@@ -26,5 +31,6 @@ assert bytes.fromhex('8b9fcc000000') in raw
 native_header=(ROOT/'src/NativeState.hpp').read_text()
 assert 'CpuStride=0x380,UrgencyOffset=0xCC' in native_header
 print(json.dumps({'boot_kc_sha256':actual['boot_kc_sha256'],
+    'target':target_name,
     'running_kernel_uuid_matches':True,'relocation_proofs':actual['relocation_proofs'],
     'scope':'Static KC audit; runtime fingerprints still gate all hooks.'},indent=2))

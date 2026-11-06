@@ -6,15 +6,15 @@ import json
 import re
 import struct
 import subprocess
+from targets import TARGETS, select
 
 ROOT=Path(__file__).resolve().parent
 KERNEL=Path('/System/Library/Kernels/kernel')
 CACHE=Path('/System/Library/KernelCollections/BootKernelExtensions.kc')
-CACHE_SHA='96c12f421a8e99580b5015dfd39877df38ecde9b9e056b8ccd28f15847bca35c'
 
 class MachO:
     def __init__(self,data,base=0):
-        self.data=data;self.base=base;self.segments={};self.uuid=None;self.symtab=None;self.entries={}
+        self.data=data;self.base=base;self.segments={};self.uuid=None;self.symtab=None;self.entries={};self.function_starts=None
         magic,cpu,_,self.filetype,count,size,_,_=struct.unpack_from('<8I',data,base)
         assert magic==0xfeedfacf and cpu==0x1000007
         offset=base+32;end=offset+size
@@ -28,6 +28,7 @@ class MachO:
                 self.segments[name.split(b'\0')[0].decode()]=(vm,sz,fo,fs)
             elif command==0x1b:self.uuid=data[offset+8:offset+24].hex()
             elif command==2:self.symtab=struct.unpack_from('<4I',data,offset+8)
+            elif command==0x26:self.function_starts=struct.unpack_from('<II',data,offset+8)
             elif command==0x80000035:
                 vm,fo,string,_=struct.unpack_from('<QQII',data,offset+8)
                 assert 32<=string<length
@@ -64,15 +65,29 @@ class MachO:
                 return other+address-vm
         raise ValueError(hex(address))
 
+    def function_sizes(self):
+        offset,size=self.function_starts
+        assert offset+size<=len(self.data)
+        end=offset+size;address=self.segments['__TEXT'][0];starts=[]
+        while offset<end:
+            value=0;shift=0
+            while True:
+                assert offset<end and shift<64
+                byte=self.data[offset];offset+=1;value|=(byte&127)<<shift;shift+=7
+                if byte<128:break
+            if not value:break
+            address+=value;starts.append(address)
+        return {a:b-a for a,b in zip(starts,starts[1:])}
+
 def fnv(raw):
     value=14695981039346656037
     for byte in raw:value=((value^byte)*1099511628211)&0xffffffffffffffff
     return value
 
-def prove_relocations(standalone,embedded,old_address,new_address,length):
+def prove_relocations(standalone,embedded,old_address,new_address,length,kernel_path=KERNEL):
     original=standalone.read(old_address,length);predicted=bytearray(original)
     assembly=subprocess.check_output(['xcrun','llvm-objdump','--disassemble',
-        '--start-address='+hex(old_address),'--stop-address='+hex(old_address+length),str(KERNEL)],text=True)
+        '--start-address='+hex(old_address),'--stop-address='+hex(old_address+length),str(kernel_path)],text=True)
     covered=0;changed=[]
     for line in assembly.splitlines():
         match=re.match(r'^([0-9a-f]+):\s+((?:[0-9a-f]{2}\s+)+)\s*(.*)$',line)
@@ -105,26 +120,36 @@ def prove_relocations(standalone,embedded,old_address,new_address,length):
     return {'only_explained_address_relocations':True,'relocated_operands':len(changed),
             'changed_bytes':sum(a!=b for a,b in zip(original,actual)),'unchanged_short_prologue':True}
 
-def audit():
-    reference=json.loads((ROOT/'standalone-profile.json').read_text())
+def audit(target=None):
+    _,selected=select(target)
+    reference=json.loads(selected['standalone'].read_text())
+    expected=json.loads(selected['boot'].read_text())
     raw=KERNEL.read_bytes();cache=CACHE.read_bytes()
     assert hashlib.sha256(raw).hexdigest()==reference['kernel_sha256']
-    assert hashlib.sha256(cache).hexdigest()==CACHE_SHA,'Different KC: explicit re-audit required'
+    assert hashlib.sha256(cache).hexdigest()==expected['boot_kc_sha256'],'Different KC: explicit re-audit required'
     outer=MachO(cache);assert outer.filetype==12
     _,entry=outer.entries['com.apple.kernel']
     standalone=MachO(raw);embedded=MachO(cache,entry)
     assert standalone.uuid==embedded.uuid==reference['kernel_uuid']
     live=subprocess.check_output(['/usr/sbin/sysctl','-n','kern.uuid'],text=True).strip().replace('-','').lower()
     assert live==embedded.uuid
+    build=subprocess.check_output(['/usr/bin/sw_vers','-buildVersion'],text=True).strip()
+    assert build==selected['build'],'Different OS build: explicit re-audit required'
     mapping={'writer':'_xcpm_enable_pstate_ctrs','timer':'_xcpm_timer','urgency':'_xcpm_urgency','deadline':'_xcpm_get_deadline'}
     symbols=embedded.symbols(mapping.values());functions={};proofs={}
+    old_sizes=standalone.function_sizes();new_sizes=embedded.function_sizes()
     for name,symbol in mapping.items():
-        address=symbols[symbol]+(0x1190 if name=='writer' else 0)
+        address=symbols[symbol]+(selected['writer_offset'] if name=='writer' else 0)
         old=reference['functions'][name];length=old['length'];data=embedded.read(address,length)
+        assert old_sizes[int(old['address'],0)]==new_sizes[address]==length,'Reviewed function boundary changed'
         proofs[name]=prove_relocations(standalone,embedded,int(old['address'],0),address,length)
         functions[name]={'address':hex(address),'length':length,'sha256':hashlib.sha256(data).hexdigest(),'fnv1a64':hex(fnv(data))}
     return {'kernel_uuid':embedded.uuid,'kernel_sha256':reference['kernel_sha256'],
-        'boot_kc_sha256':CACHE_SHA,'boot_kc_uuid':outer.uuid,'kernel_fileset_offset':entry,
+        'boot_kc_sha256':expected['boot_kc_sha256'],'boot_kc_uuid':outer.uuid,'kernel_fileset_offset':entry,
         'functions':functions,'relocation_proofs':proofs}
 
-if __name__=='__main__':print(json.dumps(audit(),indent=2))
+if __name__=='__main__':
+    import argparse
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--target',choices=TARGETS)
+    print(json.dumps(audit(parser.parse_args().target),indent=2))

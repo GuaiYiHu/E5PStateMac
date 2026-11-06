@@ -1,0 +1,30 @@
+{
+  "kernel_uuid": "747934e9fd0136ab8e9706a578ab22f9",
+  "kernel_sha256": "6f4a2b3811ab220464582e7d51bcf46551f4846de9c71205b11d1b124b85bc10",
+  "functions": {
+    "writer": {
+      "address": "0xffffff8000469870",
+      "length": 736,
+      "sha256": "dc2c96e0dff9448a00283c19e1bdef40e045babb3557b440230dece8843b74b5",
+      "fnv1a64": "0x1e65fab0e9410fb0"
+    },
+    "timer": {
+      "address": "0xffffff8000469cc0",
+      "length": 928,
+      "sha256": "56c9d4ff12052ff065171c8c37d52f186c5d7115537ec056bf5086d737a92e42",
+      "fnv1a64": "0x60c5fa063c6c791a"
+    },
+    "urgency": {
+      "address": "0xffffff800046a5a0",
+      "length": 5696,
+      "sha256": "337e389b2f4d2075ace6743a9a6da25c4737ba6183e96d0f6bc11e7c01ee8212",
+      "fnv1a64": "0xf85831a97eb94266"
+    },
+    "deadline": {
+      "address": "0xffffff8000469c90",
+      "length": 48,
+      "sha256": "29887d5dc65e394b0037a2956e84577abf82c26f45963bf3f066ae3f9fc11bf1",
+      "fnv1a64": "0xeec7c9443c1b85b"
+    }
+  }
+}

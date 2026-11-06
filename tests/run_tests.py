@@ -13,6 +13,8 @@ import sys
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT))
+from targets import TARGETS, select
 
 
 def main():
@@ -23,20 +25,25 @@ def main():
                         help='Optional locally supplied Linux intel_pstate.c for differential checks')
     parser.add_argument('--binary', type=Path,
                         help='Optional built .kext to check with macOS tools')
+    parser.add_argument('--target',choices=TARGETS,
+                        help='Target for optional exact-kernel checks; inferred from running build')
     args = parser.parse_args()
     compiler = shutil.which('clang++') or shutil.which('g++')
     if not compiler:
         parser.error('A C++17 compiler is required')
     results = {}
+    from targets_test import check
+    results['targets'] = check(compiler)
     with tempfile.TemporaryDirectory(prefix='e5pstate-tests-') as temp:
         temp = Path(temp)
         cases = ['identity', 'adapter', 'governor', 'control_safety']
         fixture = None
         if args.kernel_profile:
-            subprocess.run([sys.executable, str(ROOT/'tests/profile_test.py')], check=True)
+            target_name,target=select(args.target)
+            subprocess.run([sys.executable, str(ROOT/'tests/profile_test.py'),'--target',target_name], check=True)
             sys.path.insert(0, str(ROOT))
             from kc_profile import CACHE, MachO
-            profile = json.loads((ROOT/'kernel-profile.json').read_text())
+            profile = json.loads(target['boot'].read_text())
             cache = MachO(CACHE.read_bytes())
             kernel = MachO(cache.data, cache.entries['com.apple.kernel'][1])
             function = profile['functions']['urgency']
@@ -45,8 +52,9 @@ def main():
             cases.append('native_state')
         for name in cases:
             binary = temp/(name+'-test')
+            definitions=['-D'+d for d in target['defines']] if name=='native_state' else []
             subprocess.run([compiler, '-std=c++17', '-O2', '-Wall', '-Wextra', '-Werror',
-                            str(ROOT/'tests'/(name+'_test.cpp')), '-o', str(binary)], check=True)
+                            *definitions,str(ROOT/'tests'/(name+'_test.cpp')), '-o', str(binary)], check=True)
             command = [str(binary)]
             if name == 'native_state':
                 command.append(str(fixture))

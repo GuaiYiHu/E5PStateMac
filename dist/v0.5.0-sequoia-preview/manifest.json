@@ -1,0 +1,13 @@
+{
+  "version": "0.5.0",
+  "target": "sequoia-24H232",
+  "target_build": "24H232",
+  "target_kernel_uuid": "747934E9-FD01-36AB-8E97-06A578AB22F9",
+  "deployment_target": "15.0",
+  "sdk_version": "26.2",
+  "mode": "observer",
+  "control_compiled_out": true,
+  "runtime_status": "Build, host policy, exact kernel/KC and binary checks passed; pending reboot validation",
+  "binary_sha256": "643857f73f3a2fb376bd4dbdf7a040612a6d94584c4dead15788ff9c46a6cb93",
+  "zip_sha256": "4efaac87192b0b3cde6af4e6348e8ae8d5b4c0e5eb03a9797f17303eb4c27b91"
+}
