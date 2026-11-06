@@ -9,5 +9,25 @@
   "all_cpu_selftest_required": true,
   "binary_sha256": "42f45cff796f5482ef11f96ddbd2fbf90e181cf9ff3984bacc6311329b44010f",
   "zip_sha256": "c2a4914317fb30aac6f6650f84b8a524197a4db79958694a9b484b311644d3f0",
-  "runtime_status": "Build, policy regressions, exact kernel/KC and binary checks passed; installed pending reboot. Early control activation and flag behavior not runtime validated."
+  "runtime_status": "Default self-test-first boot and phased frequency-control short test passed on 24H232. Optional 15-second flag remains host/static-tested only; sleep/wake and long-term stability unverified.",
+  "runtime_validation": {
+    "date": "2026-11-07",
+    "extra_wait_seconds": 0,
+    "first_control_ready_after_service_seconds": 11.765796825,
+    "first_control_ready_kernel_uptime_seconds": 12.705285816,
+    "first_actual_write_timestamp_recorded": false,
+    "new_valid_samples": 40380,
+    "new_controlled_writes": 15549,
+    "new_verified_readbacks": 15549,
+    "fallback_writes": 0,
+    "fault": 0,
+    "driver_per_cpu_mean_mhz_range": [
+      3176.62,
+      3183.81
+    ],
+    "powermetrics_system_mean_mhz": 3174.15,
+    "recovery_min_request_ratio": 12,
+    "recovery_min_busy_mhz_estimate": 1278,
+    "results": "../../docs/startup-policy-results.json"
+  }
 }

@@ -2,9 +2,9 @@
 
 Experimental frequency control for **Intel Xeon E5-2666 v3 / macOS**, implemented as a Lilu plugin.
 
-针对 E5-2666 v3 的实验性 macOS 调频驱动。目标是保留低负载降频，在普通整数满载时恢复处理器原有的全核睿频。当前源码为 **0.5.1 实验版**，默认自检完成后立即接管，可用 `-e5pmwait15` 恢复 15 秒预热。0.5.1 尚待重启验证；0.5.0 的 Sequoia 控制版与 0.4.0 的 Tahoe 控制版分别通过单机运行短测，吞吐及跑分对照仍仅来自 Tahoe。
+针对 E5-2666 v3 的实验性 macOS 调频驱动。目标是保留低负载降频，在普通整数满载时恢复处理器原有的全核睿频。当前源码为 **0.5.1 实验版**，默认自检完成后立即接管，可用 `-e5pmwait15` 恢复 15 秒预热。0.5.1 已在 Sequoia 上通过一次默认启动路径及分阶段升降频短测；0.5.0 的 Sequoia 控制版与 0.4.0 的 Tahoe 控制版也有单机短测，吞吐及跑分对照仍仅来自 Tahoe。
 
-> **不是通用 X99 驱动。macOS 26 / 0.4.0 和 macOS 15 / 0.5.0 控制版分别在同一台机器的固定内核上通过短测。** 使用私有 XCPM 接口，错误适配可能导致冻结或内核恐慌。长期稳定性、睡眠唤醒和空闲功耗尚未验证。
+> **不是通用 X99 驱动。macOS 26 / 0.4.0 和 macOS 15 / 0.5.0、0.5.1 控制版分别在同一台机器的固定内核上通过短测。** 使用私有 XCPM 接口，错误适配可能导致冻结或内核恐慌。长期稳定性、睡眠唤醒和空闲功耗尚未验证。
 
 ## 已审查的目标
 
@@ -17,7 +17,7 @@ Experimental frequency control for **Intel Xeon E5-2666 v3 / macOS**, implemente
 | 构建目标 | 系统与内核 | 证据与状态 |
 |---|---|---|
 | `tahoe-25G332` | macOS 26.7.2 / `25G332` / Darwin `25.6.0`；UUID `28267FD5-3E1E-3686-8A1C-E73E2466FCFB` | [固定指纹](kernel-profile.json)；0.4.0 控制版有单机短测；0.5.0 重新构建未做运行验收 |
-| `sequoia-24H232` | macOS 15.8.2 / `24H232` / Darwin `24.6.0`；UUID `747934E9-FD01-36AB-8E97-06A578AB22F9` | [独立指纹](profiles/sequoia-24H232/boot.json)、[审查及运行验收](docs/sequoia-24H232.md)；0.5.0 观察版及控制版单机短测通过 |
+| `sequoia-24H232` | macOS 15.8.2 / `24H232` / Darwin `24.6.0`；UUID `747934E9-FD01-36AB-8E97-06A578AB22F9` | [独立指纹](profiles/sequoia-24H232/boot.json)、[0.5.0 验收](docs/sequoia-24H232.md)、[0.5.1 启动及调频验收](docs/startup-policy.md)；对应单机短测通过 |
 
 每个二进制只编入一个目标；内核 UUID 和函数指纹不匹配时拒绝安装钩子。系统更新改变内核后，需要重新审查适配，不能仅替换散列值。Darwin 版本号相同也不代表内核相同。
 
@@ -57,7 +57,7 @@ Experimental frequency control for **Intel Xeon E5-2666 v3 / macOS**, implemente
 
 [dist/v0.5.0-sequoia](dist/v0.5.0-sequoia) 提供 `24H232` 专用控制版，二进制对应下述 Sequoia 短测，会实际改变频率请求。[观察版](dist/v0.5.0-sequoia-preview) 的控制路径编译禁用，已通过采样短测；原观察版二进制与 ZIP 保持不变，当前运行状态见各自 manifest 和审查说明。
 
-[dist/v0.5.1-sequoia-preview](dist/v0.5.1-sequoia-preview) 为取消默认固定等待的测试版，已通过编译、算法门控、精确内核和静态二进制检查；新的早期接管时机尚待重启运行验收。原 0.5.0 运行数据不能代替该项验证。
+[dist/v0.5.1-sequoia-preview](dist/v0.5.1-sequoia-preview) 为取消默认固定等待的实验版，已通过编译、算法门控、精确内核、静态二进制检查及一次默认启动／调频短测。本次服务启动后约 11.77 秒首次通过控制门控，内核 uptime 约 12.71 秒；实际为 0 秒额外等待。该时间取决于采样与健康条件，不是新的固定延迟。分发二进制与 ZIP 保持原样，当前验收状态见 manifest 与启动策略说明；可选 15 秒 flag 尚未单独重启验证。
 
 需要 Xcode、macOS Kernel.framework 头文件与 x86_64 交叉编译支持。0.5.0 使用 macOS 26.2 SDK，Sequoia 对象文件的部署目标为 15.0；本机已核对观察版全部外部符号可由固定 Sequoia 内核和 Lilu 提供。SDK 版本号本身不能证明运行兼容。固定版本的公开 Lilu SDK 和 MacKernelSDK 已放在 `vendor/`，许可随源码保留。
 

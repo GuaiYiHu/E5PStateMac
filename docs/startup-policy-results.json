@@ -1,0 +1,215 @@
+{
+  "status": "short_test_passed",
+  "date": "2026-11-07",
+  "version": "0.5.1",
+  "os": "macOS 15.8.2",
+  "build": "24H232",
+  "module_uuid": "58F49C23-613E-308C-9A95-A54DFBBE260E",
+  "extra_wait_seconds": 0,
+  "epoch": 1,
+  "driver_service_start_ns": 939488991,
+  "first_control_ready_ns": 12705285816,
+  "first_control_ready_after_service_seconds": 11.765796825,
+  "first_control_ready_kernel_uptime_seconds": 12.705285816,
+  "first_ready_precedes_15_seconds": true,
+  "first_actual_write_timestamp_recorded": false,
+  "flags": {
+    "continuous_full_load_sampling": true,
+    "control_armed_during_full_load": true,
+    "controlled_writes_observed": true,
+    "request_readbacks_verified": true,
+    "fallback_writes_zero": true,
+    "low_load_lower_requests_observed": true
+  },
+  "snapshot_count": 62,
+  "new_valid_samples": 40380,
+  "new_controlled_writes": 15549,
+  "new_verified_readbacks": 15549,
+  "new_fallback_writes": 0,
+  "fault": 0,
+  "full_load_sample_deltas": {
+    "0": 896,
+    "1": 556,
+    "2": 893,
+    "3": 552,
+    "4": 874,
+    "5": 548,
+    "6": 842,
+    "7": 563,
+    "8": 884,
+    "9": 546,
+    "10": 869,
+    "11": 562,
+    "12": 871,
+    "13": 545,
+    "14": 866,
+    "15": 562,
+    "16": 871,
+    "17": 582,
+    "18": 882,
+    "19": 549
+  },
+  "fresh_high_busy_frequency_per_cpu": {
+    "0": {
+      "samples": 16,
+      "mean_mhz": 3180.88,
+      "min_mhz": 3103,
+      "max_mhz": 3200
+    },
+    "1": {
+      "samples": 15,
+      "mean_mhz": 3181.2,
+      "min_mhz": 3103,
+      "max_mhz": 3200
+    },
+    "2": {
+      "samples": 16,
+      "mean_mhz": 3181.19,
+      "min_mhz": 3103,
+      "max_mhz": 3200
+    },
+    "3": {
+      "samples": 14,
+      "mean_mhz": 3180.93,
+      "min_mhz": 3103,
+      "max_mhz": 3200
+    },
+    "4": {
+      "samples": 16,
+      "mean_mhz": 3179.75,
+      "min_mhz": 3103,
+      "max_mhz": 3199
+    },
+    "5": {
+      "samples": 16,
+      "mean_mhz": 3179.62,
+      "min_mhz": 3102,
+      "max_mhz": 3200
+    },
+    "6": {
+      "samples": 16,
+      "mean_mhz": 3178.56,
+      "min_mhz": 3104,
+      "max_mhz": 3200
+    },
+    "7": {
+      "samples": 16,
+      "mean_mhz": 3179.25,
+      "min_mhz": 3103,
+      "max_mhz": 3200
+    },
+    "8": {
+      "samples": 16,
+      "mean_mhz": 3180,
+      "min_mhz": 3103,
+      "max_mhz": 3200
+    },
+    "9": {
+      "samples": 16,
+      "mean_mhz": 3180.81,
+      "min_mhz": 3103,
+      "max_mhz": 3200
+    },
+    "10": {
+      "samples": 16,
+      "mean_mhz": 3180.12,
+      "min_mhz": 3102,
+      "max_mhz": 3200
+    },
+    "11": {
+      "samples": 16,
+      "mean_mhz": 3178,
+      "min_mhz": 3100,
+      "max_mhz": 3200
+    },
+    "12": {
+      "samples": 16,
+      "mean_mhz": 3176.62,
+      "min_mhz": 3103,
+      "max_mhz": 3200
+    },
+    "13": {
+      "samples": 14,
+      "mean_mhz": 3176.93,
+      "min_mhz": 3103,
+      "max_mhz": 3199
+    },
+    "14": {
+      "samples": 16,
+      "mean_mhz": 3181.62,
+      "min_mhz": 3103,
+      "max_mhz": 3200
+    },
+    "15": {
+      "samples": 16,
+      "mean_mhz": 3180.81,
+      "min_mhz": 3100,
+      "max_mhz": 3200
+    },
+    "16": {
+      "samples": 16,
+      "mean_mhz": 3181.06,
+      "min_mhz": 3103,
+      "max_mhz": 3200
+    },
+    "17": {
+      "samples": 16,
+      "mean_mhz": 3178.31,
+      "min_mhz": 3103,
+      "max_mhz": 3200
+    },
+    "18": {
+      "samples": 16,
+      "mean_mhz": 3183.81,
+      "min_mhz": 3103,
+      "max_mhz": 3200
+    },
+    "19": {
+      "samples": 15,
+      "mean_mhz": 3177.27,
+      "min_mhz": 3102,
+      "max_mhz": 3200
+    }
+  },
+  "mean_of_per_cpu_mhz": 3179.84,
+  "powermetrics_samples_total": 40,
+  "powermetrics_steady_samples": 11,
+  "powermetrics_per_cpu_mean_mhz": {
+    "0": 3173.92,
+    "1": 3174.39,
+    "2": 3173.92,
+    "3": 3174.47,
+    "4": 3173.92,
+    "5": 3174.45,
+    "6": 3173.92,
+    "7": 3174.37,
+    "8": 3173.92,
+    "9": 3174.27,
+    "10": 3173.92,
+    "11": 3174.54,
+    "12": 3173.92,
+    "13": 3174.44,
+    "14": 3173.92,
+    "15": 3174.35,
+    "16": 3173.92,
+    "17": 3174.43,
+    "18": 3173.92,
+    "19": 3174.33
+  },
+  "powermetrics_system_mean_mhz": 3174.15,
+  "powermetrics_thermal_pressure": [
+    "Nominal"
+  ],
+  "recovery_min_request_ratio": 12,
+  "recovery_min_busy_mhz_estimate": 1278,
+  "near_stock_all_core_frequency_verified": true,
+  "legacy_15_second_flag_runtime_tested": false,
+  "sleep_wake_tested": false,
+  "long_term_stability_tested": false,
+  "throughput_ab_tested": false,
+  "evidence_sha256": {
+    "observation-20261107-034857.json": "66498f1992c4acd9f0073f4e3bea037cb882d279acded3ed3b22f82871615113",
+    "powermetrics-0.5.1.txt": "154f4ed0057f107a88218c261066b19909f76361d0594a4bdb7f1202c3348f3b"
+  },
+  "scope": "First-ready time means all control gates permit takeover, not a separately logged first hardware write. Single boot/short test; readiness time varies with sampling and XCPM health."
+}
