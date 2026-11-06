@@ -4,7 +4,7 @@ Experimental frequency control for **Intel Xeon E5-2666 v3 / macOS**, implemente
 
 针对 E5-2666 v3 的实验性 macOS 调频驱动。目标是保留低负载降频，在普通整数满载时恢复处理器原有的全核睿频。当前源码为 **0.5.0 实验版**，增加 macOS 15 的独立内核适配；已有运行短测的数据仍来自 macOS 26 上的 **0.4.0**。
 
-> **仅在一台机器的 macOS 26 固定内核上做过短测，不是通用 X99 驱动。macOS 15 适配尚待重启运行验收。** 使用私有 XCPM 接口，错误适配可能导致冻结或内核恐慌。长期稳定性、睡眠唤醒和空闲功耗尚未验证。
+> **不是通用 X99 驱动。macOS 26 控制版和 macOS 15 观察版分别在同一台机器的固定内核上通过短测；macOS 15 控制版仍待运行验收。** 使用私有 XCPM 接口，错误适配可能导致冻结或内核恐慌。长期稳定性、睡眠唤醒和空闲功耗尚未验证。
 
 ## 已审查的目标
 
@@ -17,7 +17,7 @@ Experimental frequency control for **Intel Xeon E5-2666 v3 / macOS**, implemente
 | 构建目标 | 系统与内核 | 证据与状态 |
 |---|---|---|
 | `tahoe-25G332` | macOS 26.7.2 / `25G332` / Darwin `25.6.0`；UUID `28267FD5-3E1E-3686-8A1C-E73E2466FCFB` | [固定指纹](kernel-profile.json)；0.4.0 控制版有单机短测；0.5.0 重新构建未做运行验收 |
-| `sequoia-24H232` | macOS 15.8.2 / `24H232` / Darwin `24.6.0`；UUID `747934E9-FD01-36AB-8E97-06A578AB22F9` | [独立指纹](profiles/sequoia-24H232/boot.json)、[审查说明](docs/sequoia-24H232.md)；观察版静态校验通过，运行与调频效果待验证 |
+| `sequoia-24H232` | macOS 15.8.2 / `24H232` / Darwin `24.6.0`；UUID `747934E9-FD01-36AB-8E97-06A578AB22F9` | [独立指纹](profiles/sequoia-24H232/boot.json)、[审查及观察验收](docs/sequoia-24H232.md)；0.5.0 观察版单机短测通过；控制版运行与调频效果待验证 |
 
 每个二进制只编入一个目标；内核 UUID 和函数指纹不匹配时拒绝安装钩子。系统更新改变内核后，需要重新审查适配，不能仅替换散列值。Darwin 版本号相同也不代表内核相同。
 
@@ -52,7 +52,7 @@ Experimental frequency control for **Intel Xeon E5-2666 v3 / macOS**, implemente
 
 [dist/v0.4.0](dist/v0.4.0) 提供控制版与观察版的 `.kext`、ZIP、散列及依赖许可。**控制版会实际改变频率请求。** 当前控制版二进制对应下述单机短测；观察版完成编译和静态检查，未单独进行 0.4.0 运行验收。
 
-[dist/v0.5.0-sequoia-preview](dist/v0.5.0-sequoia-preview) 提供 `24H232` 专用观察版；控制路径已编译禁用。它尚未完成重启运行验收，不代表 macOS 15 调频已修复。
+[dist/v0.5.0-sequoia-preview](dist/v0.5.0-sequoia-preview) 提供 `24H232` 专用观察版；控制路径已编译禁用。它已通过重启与分阶段采样短测，不代表 macOS 15 调频已修复。分发二进制与 ZIP 保持原样，当前运行状态见 manifest 和审查说明。
 
 需要 Xcode、macOS Kernel.framework 头文件与 x86_64 交叉编译支持。0.5.0 使用 macOS 26.2 SDK，Sequoia 对象文件的部署目标为 15.0；本机已核对观察版全部外部符号可由固定 Sequoia 内核和 Lilu 提供。SDK 版本号本身不能证明运行兼容。固定版本的公开 Lilu SDK 和 MacKernelSDK 已放在 `vendor/`，许可随源码保留。
 

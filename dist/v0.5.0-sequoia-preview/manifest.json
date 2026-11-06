@@ -7,7 +7,23 @@
   "sdk_version": "26.2",
   "mode": "observer",
   "control_compiled_out": true,
-  "runtime_status": "Build, host policy, exact kernel/KC and binary checks passed; pending reboot validation",
+  "runtime_status": "Observer reboot and phased sampling short test passed on 24H232; guarded-control runtime and frequency restoration remain unverified",
   "binary_sha256": "643857f73f3a2fb376bd4dbdf7a040612a6d94584c4dead15788ff9c46a6cb93",
-  "zip_sha256": "4efaac87192b0b3cde6af4e6348e8ae8d5b4c0e5eb03a9797f17303eb4c27b91"
+  "zip_sha256": "4efaac87192b0b3cde6af4e6348e8ae8d5b4c0e5eb03a9797f17303eb4c27b91",
+  "observer_runtime_validation": {
+    "date": "2026-11-07",
+    "module_uuid": "8AF5FDDF-368C-3902-A320-6534E0D40D48",
+    "logical_cpus_sampled": 20,
+    "new_valid_samples": 16840,
+    "full_load_per_cpu_sample_delta_range": [
+      391,
+      699
+    ],
+    "controlled_writes": 0,
+    "readback_writes": 0,
+    "fallback_writes": 0,
+    "fault": 0,
+    "selftest_ready_mask": "0xFFFFF",
+    "control_active": false
+  }
 }
