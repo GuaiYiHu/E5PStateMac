@@ -51,7 +51,7 @@ struct Diagnostics {
 };
 static Diagnostics diagnostics={};
 static volatile uint32_t mode=0,hooks=0,serviceReady=0,suspended=1,epoch=1,fault=0;
-static volatile uint64_t warmupStartNs=0;
+static volatile uint64_t warmupStartNs=0,warmupNs=0,controlFirstReadyNs=0;
 static const char * volatile status="not-requested";
 static void setStatus(const char *value) {__atomic_store_n(&status,value,__ATOMIC_RELEASE);}
 
@@ -141,8 +141,14 @@ static bool control() {
 #ifdef E5_SHADOW_ONLY
     return false;
 #else
-    return e5mac::canControl(gate()) &&
-        e5mac::warmupReady(nowNs(),load(warmupStartNs),readyMask());
+    if (!e5mac::canControl(gate())) return false;
+    const uint64_t now=nowNs();
+    if (!e5mac::warmupReady(now,load(warmupStartNs),readyMask(),load(warmupNs))) return false;
+    if (!load(controlFirstReadyNs)) {
+        uint64_t unset=0;
+        __atomic_compare_exchange_n(&controlFirstReadyNs,&unset,now,false,__ATOMIC_ACQ_REL,__ATOMIC_ACQUIRE);
+    }
+    return true;
 #endif
 }
 static bool cpuIndex(void *lcpu,unsigned &index) {
@@ -383,6 +389,7 @@ PluginConfiguration ADDPR(config)={
         if (requested!=1 && requested!=2) {
             adapter::setStatus("disabled-no-e5pm-argument");ADDPR(startSuccess)=false;return;
         }
+        adapter::store(adapter::warmupNs,e5mac::warmupDelayNs(checkKernelArgument("-e5pmwait15")));
         adapter::store(adapter::mode,static_cast<uint32_t>(requested));
         if (lilu.onPatcherLoad(adapter::patch)!=LiluAPI::Error::NoError) adapter::setStatus("patcher-registration-failed");
     }};
@@ -451,8 +458,9 @@ void E5PStateMac::publish() {
     setProperty("SelfTestReadyMask",adapter::readyMask(),32);
     setProperty("SelfTestRequiredMask",e5mac::AllCpusMask,32);
     setProperty("SelfTestSamplesPerCPU",e5mac::RequiredGoodSamples,32);
-    setProperty("WarmupMinimumSeconds",e5mac::WarmupNs/1000000000,64);
+    setProperty("WarmupMinimumSeconds",adapter::load(adapter::warmupNs)/1000000000,64);
     setProperty("WarmupStartNs",adapter::load(adapter::warmupStartNs),64);
+    setProperty("ControlFirstReadyNs",adapter::load(adapter::controlFirstReadyNs),64);
     setProperty("Suspended",bool(adapter::load(adapter::suspended)));
     setProperty("Fault",adapter::load(adapter::fault),32);
     setProperty("KernelMajorObserved",static_cast<uint32_t>(adapter::diagnostics.kernelMajor),32);
@@ -529,6 +537,7 @@ IOReturn E5PStateMac::power(void *,void *,UInt32 message,IOService *,void *argum
         }
     } else if (message==kIOMessageSystemHasPoweredOn || message==kIOMessageSystemWillNotSleep) {
         __atomic_fetch_add(&adapter::epoch,1,__ATOMIC_ACQ_REL);
+        adapter::store(adapter::controlFirstReadyNs,uint64_t(0));
         adapter::store(adapter::warmupStartNs,adapter::nowNs());
         adapter::store(adapter::suspended,uint32_t(0));
     }

@@ -3,7 +3,8 @@
 #include "AdapterPolicy.hpp"
 
 namespace e5mac {
-constexpr uint64_t WarmupNs=15000000000ULL;
+constexpr uint64_t LegacyWarmupNs=15000000000ULL;
+constexpr uint64_t warmupDelayNs(bool wait15) {return wait15?LegacyWarmupNs:0;}
 constexpr uint64_t FreshDecisionNs=100000000;
 constexpr uint64_t MaximumSampleGapNs=250000000;
 constexpr uint32_t RequiredGoodSamples=8;
@@ -18,8 +19,8 @@ inline bool noteSample(Readiness &state,uint64_t now,bool valid) {
     state.lastGoodNs=now;
     return state.good>=RequiredGoodSamples;
 }
-inline bool warmupReady(uint64_t now,uint64_t start,uint32_t mask) {
-    return start && now>=start && now-start>=WarmupNs && mask==AllCpusMask;
+inline bool warmupReady(uint64_t now,uint64_t start,uint32_t mask,uint64_t delay=0) {
+    return start && now>=start && now-start>=delay && mask==AllCpusMask;
 }
 inline bool freshDecision(uint64_t now,uint64_t sample,bool valid,bool thermal) {
     return valid && !thermal && sample && now>=sample && now-sample<=FreshDecisionNs;

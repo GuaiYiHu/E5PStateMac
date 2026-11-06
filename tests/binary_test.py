@@ -38,6 +38,9 @@ if 'E5TargetProfile' in info:
             assert re.search(r'\bminos\s+'+re.escape(target['deployment'])+r'\s',commands)
     assert info['E5TargetBuild'].encode()+b'\0' in binary.read_bytes()
 assert shadow != guarded
+if tuple(map(int,info['CFBundleVersion'].split('.'))) >= (0,5,1):
+    assert b'-e5pmwait15\0' in binary.read_bytes()
+    assert b'ControlFirstReadyNs\0' in binary.read_bytes()
 assert 'verifyWrite' in symbols if guarded else 'verifyWrite' not in symbols
 if shadow:
     demangled=subprocess.check_output(['xcrun','llvm-objdump','--disassemble','--demangle',str(binary)],text=True)

@@ -1,0 +1,13 @@
+{
+  "version": "0.5.1",
+  "target": "sequoia-24H232",
+  "target_build": "24H232",
+  "module_uuid": "58F49C23-613E-308C-9A95-A54DFBBE260E",
+  "mode": "guarded-control",
+  "default_extra_wait_seconds": 0,
+  "optional_15_second_flag": "-e5pmwait15",
+  "all_cpu_selftest_required": true,
+  "binary_sha256": "42f45cff796f5482ef11f96ddbd2fbf90e181cf9ff3984bacc6311329b44010f",
+  "zip_sha256": "c2a4914317fb30aac6f6650f84b8a524197a4db79958694a9b484b311644d3f0",
+  "runtime_status": "Build, policy regressions, exact kernel/KC and binary checks passed; installed pending reboot. Early control activation and flag behavior not runtime validated."
+}

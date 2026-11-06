@@ -6,7 +6,9 @@
 int main() {
     using namespace e5mac;
     const Gate running={2,true,true,false,false,true,false,false,false,true};
-    const uint64_t boot=1000000000,after=boot+WarmupNs;
+    const uint64_t boot=1000000000,after=boot+LegacyWarmupNs;
+    static_assert(warmupDelayNs(false)==0);
+    static_assert(warmupDelayNs(true)==15000000000ULL);
     Readiness states[ExpectedCpus]={};uint32_t mask=0;
     for (unsigned tick=1;tick<=RequiredGoodSamples;++tick) {
         for (unsigned cpu=0;cpu<ExpectedCpus;++cpu) {
@@ -18,12 +20,19 @@ int main() {
         }
         if (tick<RequiredGoodSamples) assert(!warmupReady(after,boot,mask));
     }
-    assert(mask==AllCpusMask && warmupReady(after,boot,mask));
-    assert(!warmupReady(after-1,boot,mask));
-    assert(!warmupReady(after,0,mask));
-    assert(!warmupReady(boot-1,boot,mask));
-    assert(!warmupReady(after,boot,mask&~(1U<<19)));
-    assert(!warmupReady(after,boot,mask|(1U<<20)));
+    const uint64_t samplesComplete=boot+RequiredGoodSamples*40000000;
+    assert(mask==AllCpusMask && warmupReady(samplesComplete,boot,mask));
+    assert(samplesComplete-boot<LegacyWarmupNs);
+    assert(!warmupReady(samplesComplete,boot,mask,warmupDelayNs(true)));
+    assert(!warmupReady(after-1,boot,mask,warmupDelayNs(true)));
+    assert(warmupReady(after,boot,mask,warmupDelayNs(true)));
+    const uint64_t delays[]={warmupDelayNs(false),warmupDelayNs(true)};
+    for (uint64_t delay:delays) {
+        assert(!warmupReady(after,0,mask,delay));
+        assert(!warmupReady(boot-1,boot,mask,delay));
+        assert(!warmupReady(after,boot,mask&~(1U<<19),delay));
+        assert(!warmupReady(after,boot,mask|(1U<<20),delay));
+    }
     assert(!sampleLocal(running,20));
     auto broken=running;broken.suspended=true;assert(!sampleLocal(broken,0));
     broken=running;broken.fault=true;assert(!sampleLocal(broken,0));
@@ -54,5 +63,5 @@ int main() {
     assert(full.sampled && full.ratio==35);
     const auto quiet=e5::chooseNonHwp({29000000,32000,29000},cfg,0,35);
     assert(quiet.sampled && quiet.ratio>=12 && quiet.ratio<35);
-    puts("PASS: zero native class, 20 CPU qualification, warmup, gaps, invalid feedback, stale/thermal pass-through, stock/turbo caps and full-load-to-idle scaling");
+    puts("PASS: default self-test-only startup, opt-in 15s delay, 20 CPU qualification, invalid/gapped feedback, stale/thermal pass-through, stock/turbo caps and full-load-to-idle scaling");
 }

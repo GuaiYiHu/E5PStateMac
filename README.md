@@ -2,7 +2,7 @@
 
 Experimental frequency control for **Intel Xeon E5-2666 v3 / macOS**, implemented as a Lilu plugin.
 
-针对 E5-2666 v3 的实验性 macOS 调频驱动。目标是保留低负载降频，在普通整数满载时恢复处理器原有的全核睿频。当前源码为 **0.5.0 实验版**，增加 macOS 15 的独立内核适配；0.5.0 的 Sequoia 控制版与 0.4.0 的 Tahoe 控制版分别通过单机运行短测，吞吐及跑分对照仍仅来自 Tahoe。
+针对 E5-2666 v3 的实验性 macOS 调频驱动。目标是保留低负载降频，在普通整数满载时恢复处理器原有的全核睿频。当前源码为 **0.5.1 实验版**，默认自检完成后立即接管，可用 `-e5pmwait15` 恢复 15 秒预热。0.5.1 尚待重启验证；0.5.0 的 Sequoia 控制版与 0.4.0 的 Tahoe 控制版分别通过单机运行短测，吞吐及跑分对照仍仅来自 Tahoe。
 
 > **不是通用 X99 驱动。macOS 26 / 0.4.0 和 macOS 15 / 0.5.0 控制版分别在同一台机器的固定内核上通过短测。** 使用私有 XCPM 接口，错误适配可能导致冻结或内核恐慌。长期稳定性、睡眠唤醒和空闲功耗尚未验证。
 
@@ -34,7 +34,7 @@ Experimental frequency control for **Intel Xeon E5-2666 v3 / macOS**, implemente
 
 ## 自检与模式
 
-控制版启动或唤醒后先等待至少 **15 秒**，并要求 20 个逻辑 CPU 各取得连续 8 个、间隔不超过 100 ms 的有效样本；收齐后才允许接管。15 秒不是保证开启的固定时间。
+0.5.1 控制版启动或唤醒后默认没有固定计时等待，仍要求 20 个逻辑 CPU 各取得连续 8 个、间隔不超过 100 ms 的有效样本；收齐且其余健康条件通过后才允许接管。加入启动参数 **`-e5pmwait15`** 后，额外要求从驱动启动或唤醒起至少经过 15 秒；采样自检不会被该参数绕过。0.4.0 / 0.5.0 的固定 15 秒策略保持在原二进制中。
 
 每次实际覆盖还要求本核决策新鲜、无相关热状态标志，且 XCPM 已配置、未暂停、非 HWP、非断言模式。空闲核心不会为了收样而被本驱动周期唤醒。缺少有效反馈时沿用原请求。
 
@@ -45,6 +45,9 @@ Experimental frequency control for **Intel Xeon E5-2666 v3 / macOS**, implemente
 | `e5pm=1` | 观察模式 |
 | `e5pm=2` | Control 构建使用带门控的动态控制；Observer 构建仍只观察 |
 | `e5pm=0` 或 `-e5pmoff` | 禁用本插件 |
+| `-e5pmwait15`（0.5.1+） | 在采样自检之外增加至少 15 秒预热；不改变 mode 或开启被禁用的控制路径 |
+
+`WarmupMinimumSeconds` 显示当前选择的 0 或 15。`ControlFirstReadyNs` 记录本次启动／唤醒周期首次通过控制门控的 uptime，减去 `WarmupStartNs` 可检查自检实际耗时；未通过时为 0。这是可接管的时刻，实际覆盖还取决于每核新鲜决策及原生请求。见 [启动策略](docs/startup-policy.md)。
 
 高负载时可能请求 35 倍频，由处理器原有 N-core 睿频表限制实际频率；测试机器的十核上限为 32。不会解锁全核 35 倍频，也不是固定最高频率。驱动不支持热卸载。
 
@@ -53,6 +56,8 @@ Experimental frequency control for **Intel Xeon E5-2666 v3 / macOS**, implemente
 [dist/v0.4.0](dist/v0.4.0) 提供控制版与观察版的 `.kext`、ZIP、散列及依赖许可。**控制版会实际改变频率请求。** 当前控制版二进制对应下述单机短测；观察版完成编译和静态检查，未单独进行 0.4.0 运行验收。
 
 [dist/v0.5.0-sequoia](dist/v0.5.0-sequoia) 提供 `24H232` 专用控制版，二进制对应下述 Sequoia 短测，会实际改变频率请求。[观察版](dist/v0.5.0-sequoia-preview) 的控制路径编译禁用，已通过采样短测；原观察版二进制与 ZIP 保持不变，当前运行状态见各自 manifest 和审查说明。
+
+[dist/v0.5.1-sequoia-preview](dist/v0.5.1-sequoia-preview) 为取消默认固定等待的测试版，已通过编译、算法门控、精确内核和静态二进制检查；新的早期接管时机尚待重启运行验收。原 0.5.0 运行数据不能代替该项验证。
 
 需要 Xcode、macOS Kernel.framework 头文件与 x86_64 交叉编译支持。0.5.0 使用 macOS 26.2 SDK，Sequoia 对象文件的部署目标为 15.0；本机已核对观察版全部外部符号可由固定 Sequoia 内核和 Lilu 提供。SDK 版本号本身不能证明运行兼容。固定版本的公开 Lilu SDK 和 MacKernelSDK 已放在 `vendor/`，许可随源码保留。
 

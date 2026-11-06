@@ -21,7 +21,7 @@ def main():
     parser.add_argument('--target',choices=TARGETS,help='Reviewed kernel target; defaults to the exact running OS build')
     args=parser.parse_args()
     target_name,target=select(args.target)
-    version='0.5.0'
+    version='0.5.1'
     sdk=subprocess.check_output(['xcrun','--sdk','macosx','--show-sdk-path'],text=True).strip()
     headers=Path(sdk)/'System/Library/Frameworks/Kernel.framework/Headers'
     build=ROOT/('build-'+target_name+('-shadow' if args.shadow_only else '-control'));build.mkdir(exist_ok=True)
