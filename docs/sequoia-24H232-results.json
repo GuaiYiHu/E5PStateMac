@@ -1,0 +1,226 @@
+{
+  "status": "short_test_passed",
+  "os": "macOS 15.8.2",
+  "build": "24H232",
+  "version": "0.5.0",
+  "module_uuid": "4EAAC467-A1C2-3EE0-B7FF-E1E3DFAC7F4E",
+  "snapshot_count": 64,
+  "flags": {
+    "continuous_full_load_sampling": true,
+    "control_armed_during_full_load": true,
+    "controlled_writes_observed": true,
+    "request_readbacks_verified": true,
+    "fallback_writes_zero": true,
+    "low_load_lower_requests_observed": true
+  },
+  "fault": 0,
+  "logical_cpu_coverage": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19
+  ],
+  "new_valid_samples": 39097,
+  "new_controlled_writes": 17374,
+  "new_verified_readbacks": 17374,
+  "new_fallback_writes": 0,
+  "full_load_sample_deltas": {
+    "0": 876,
+    "1": 637,
+    "2": 853,
+    "3": 628,
+    "4": 896,
+    "5": 636,
+    "6": 860,
+    "7": 640,
+    "8": 874,
+    "9": 629,
+    "10": 864,
+    "11": 625,
+    "12": 855,
+    "13": 634,
+    "14": 846,
+    "15": 632,
+    "16": 859,
+    "17": 624,
+    "18": 880,
+    "19": 626
+  },
+  "fresh_high_busy_frequency_per_cpu": {
+    "0": {
+      "samples": 17,
+      "mean_mhz": 3168.12,
+      "min_mhz": 3109,
+      "max_mhz": 3200
+    },
+    "1": {
+      "samples": 15,
+      "mean_mhz": 3168.53,
+      "min_mhz": 3120,
+      "max_mhz": 3200
+    },
+    "2": {
+      "samples": 17,
+      "mean_mhz": 3172.35,
+      "min_mhz": 3100,
+      "max_mhz": 3199
+    },
+    "3": {
+      "samples": 14,
+      "mean_mhz": 3166,
+      "min_mhz": 3108,
+      "max_mhz": 3200
+    },
+    "4": {
+      "samples": 17,
+      "mean_mhz": 3167.47,
+      "min_mhz": 3108,
+      "max_mhz": 3199
+    },
+    "5": {
+      "samples": 15,
+      "mean_mhz": 3163.8,
+      "min_mhz": 3107,
+      "max_mhz": 3200
+    },
+    "6": {
+      "samples": 17,
+      "mean_mhz": 3163.65,
+      "min_mhz": 3109,
+      "max_mhz": 3199
+    },
+    "7": {
+      "samples": 16,
+      "mean_mhz": 3167.88,
+      "min_mhz": 3121,
+      "max_mhz": 3200
+    },
+    "8": {
+      "samples": 17,
+      "mean_mhz": 3169.82,
+      "min_mhz": 3108,
+      "max_mhz": 3199
+    },
+    "9": {
+      "samples": 14,
+      "mean_mhz": 3169.57,
+      "min_mhz": 3117,
+      "max_mhz": 3199
+    },
+    "10": {
+      "samples": 17,
+      "mean_mhz": 3170.24,
+      "min_mhz": 3108,
+      "max_mhz": 3199
+    },
+    "11": {
+      "samples": 14,
+      "mean_mhz": 3168.36,
+      "min_mhz": 3123,
+      "max_mhz": 3190
+    },
+    "12": {
+      "samples": 17,
+      "mean_mhz": 3171.12,
+      "min_mhz": 3109,
+      "max_mhz": 3199
+    },
+    "13": {
+      "samples": 14,
+      "mean_mhz": 3165.14,
+      "min_mhz": 3124,
+      "max_mhz": 3199
+    },
+    "14": {
+      "samples": 17,
+      "mean_mhz": 3166.65,
+      "min_mhz": 3108,
+      "max_mhz": 3199
+    },
+    "15": {
+      "samples": 12,
+      "mean_mhz": 3166.58,
+      "min_mhz": 3116,
+      "max_mhz": 3191
+    },
+    "16": {
+      "samples": 17,
+      "mean_mhz": 3171.12,
+      "min_mhz": 3108,
+      "max_mhz": 3195
+    },
+    "17": {
+      "samples": 14,
+      "mean_mhz": 3178.57,
+      "min_mhz": 3108,
+      "max_mhz": 3200
+    },
+    "18": {
+      "samples": 17,
+      "mean_mhz": 3167.65,
+      "min_mhz": 3109,
+      "max_mhz": 3200
+    },
+    "19": {
+      "samples": 15,
+      "mean_mhz": 3157.33,
+      "min_mhz": 3103,
+      "max_mhz": 3196
+    }
+  },
+  "mean_of_per_cpu_mhz": 3168.0,
+  "powermetrics_samples_total": 36,
+  "powermetrics_steady_samples": 14,
+  "powermetrics_mean_mhz_per_cpu": {
+    "0": 3162.42,
+    "1": 3162.7,
+    "2": 3162.43,
+    "3": 3162.8,
+    "4": 3162.43,
+    "5": 3162.71,
+    "6": 3162.42,
+    "7": 3162.69,
+    "8": 3162.42,
+    "9": 3162.8,
+    "10": 3162.42,
+    "11": 3162.76,
+    "12": 3162.43,
+    "13": 3162.61,
+    "14": 3162.43,
+    "15": 3162.64,
+    "16": 3162.43,
+    "17": 3162.77,
+    "18": 3162.43,
+    "19": 3162.55
+  },
+  "powermetrics_system_mean_mhz": 3162.56,
+  "powermetrics_pressure_levels": [
+    "Nominal"
+  ],
+  "recovery_min_request_ratio": 12,
+  "recovery_min_busy_mhz_estimate": 1202,
+  "frequency_target_near_stock_3_2_ghz": true,
+  "throughput_ab_tested": false,
+  "long_term_stability_tested": false,
+  "scope": "Single-machine short test; fresh APERF/MPERF samples and independent powermetrics client, not exact lock to 3200 MHz or Linux performance equivalence.",
+  "evidence_sha256": {
+    "observation-20261107-032725.json": "5dd78a3f2ad4d8ee852712e80ae7b0b79cc8e18d493edb0e3ffe880b27b04e7e",
+    "powermetrics-control.txt": "7859a6de42ed7d124cd099a2852c2b18adee5fd419604183c3c7b015267dff27"
+  }
+}

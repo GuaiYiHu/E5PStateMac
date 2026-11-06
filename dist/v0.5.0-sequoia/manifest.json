@@ -1,0 +1,29 @@
+{
+  "version": "0.5.0",
+  "target": "sequoia-24H232",
+  "target_build": "24H232",
+  "target_kernel_uuid": "747934E9-FD01-36AB-8E97-06A578AB22F9",
+  "module_uuid": "4EAAC467-A1C2-3EE0-B7FF-E1E3DFAC7F4E",
+  "deployment_target": "15.0",
+  "sdk_version": "26.2",
+  "mode": "guarded-control",
+  "control_compiled_out": false,
+  "binary_sha256": "9db3341b687e687c1380a7e9fc28e579514c7b563587df030f46145759d472a3",
+  "zip_sha256": "3eafb0ac757061c3aa7e75a88e1f96835c6f08720ce5dea1a50dce1fb8d7ad88",
+  "runtime_status": "Single-machine guarded-control short test passed: warmup/CPU gates, write readbacks, near-stock all-core frequency and low-load reduction; long-term, sleep/wake and throughput A/B unverified",
+  "runtime_results": "../../docs/sequoia-24H232-results.json",
+  "tests": {
+    "new_valid_samples": 39097,
+    "new_controlled_writes": 17374,
+    "new_verified_readbacks": 17374,
+    "fault": 0,
+    "fallback_writes": 0,
+    "per_cpu_mean_mhz_range": [
+      3157.33,
+      3178.57
+    ],
+    "powermetrics_system_mean_mhz": 3162.56,
+    "low_load_min_request_ratio": 12,
+    "low_load_min_busy_mhz_estimate": 1202
+  }
+}

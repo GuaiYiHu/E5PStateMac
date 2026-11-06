@@ -2,9 +2,9 @@
 
 Experimental frequency control for **Intel Xeon E5-2666 v3 / macOS**, implemented as a Lilu plugin.
 
-针对 E5-2666 v3 的实验性 macOS 调频驱动。目标是保留低负载降频，在普通整数满载时恢复处理器原有的全核睿频。当前源码为 **0.5.0 实验版**，增加 macOS 15 的独立内核适配；已有控制版的调频与性能结果来自 macOS 26 上的 **0.4.0**。
+针对 E5-2666 v3 的实验性 macOS 调频驱动。目标是保留低负载降频，在普通整数满载时恢复处理器原有的全核睿频。当前源码为 **0.5.0 实验版**，增加 macOS 15 的独立内核适配；0.5.0 的 Sequoia 控制版与 0.4.0 的 Tahoe 控制版分别通过单机运行短测，吞吐及跑分对照仍仅来自 Tahoe。
 
-> **不是通用 X99 驱动。macOS 26 控制版和 macOS 15 观察版分别在同一台机器的固定内核上通过短测；macOS 15 控制版仍待运行验收。** 使用私有 XCPM 接口，错误适配可能导致冻结或内核恐慌。长期稳定性、睡眠唤醒和空闲功耗尚未验证。
+> **不是通用 X99 驱动。macOS 26 / 0.4.0 和 macOS 15 / 0.5.0 控制版分别在同一台机器的固定内核上通过短测。** 使用私有 XCPM 接口，错误适配可能导致冻结或内核恐慌。长期稳定性、睡眠唤醒和空闲功耗尚未验证。
 
 ## 已审查的目标
 
@@ -17,7 +17,7 @@ Experimental frequency control for **Intel Xeon E5-2666 v3 / macOS**, implemente
 | 构建目标 | 系统与内核 | 证据与状态 |
 |---|---|---|
 | `tahoe-25G332` | macOS 26.7.2 / `25G332` / Darwin `25.6.0`；UUID `28267FD5-3E1E-3686-8A1C-E73E2466FCFB` | [固定指纹](kernel-profile.json)；0.4.0 控制版有单机短测；0.5.0 重新构建未做运行验收 |
-| `sequoia-24H232` | macOS 15.8.2 / `24H232` / Darwin `24.6.0`；UUID `747934E9-FD01-36AB-8E97-06A578AB22F9` | [独立指纹](profiles/sequoia-24H232/boot.json)、[审查及观察验收](docs/sequoia-24H232.md)；0.5.0 观察版单机短测通过；控制版运行与调频效果待验证 |
+| `sequoia-24H232` | macOS 15.8.2 / `24H232` / Darwin `24.6.0`；UUID `747934E9-FD01-36AB-8E97-06A578AB22F9` | [独立指纹](profiles/sequoia-24H232/boot.json)、[审查及运行验收](docs/sequoia-24H232.md)；0.5.0 观察版及控制版单机短测通过 |
 
 每个二进制只编入一个目标；内核 UUID 和函数指纹不匹配时拒绝安装钩子。系统更新改变内核后，需要重新审查适配，不能仅替换散列值。Darwin 版本号相同也不代表内核相同。
 
@@ -52,7 +52,7 @@ Experimental frequency control for **Intel Xeon E5-2666 v3 / macOS**, implemente
 
 [dist/v0.4.0](dist/v0.4.0) 提供控制版与观察版的 `.kext`、ZIP、散列及依赖许可。**控制版会实际改变频率请求。** 当前控制版二进制对应下述单机短测；观察版完成编译和静态检查，未单独进行 0.4.0 运行验收。
 
-[dist/v0.5.0-sequoia-preview](dist/v0.5.0-sequoia-preview) 提供 `24H232` 专用观察版；控制路径已编译禁用。它已通过重启与分阶段采样短测，不代表 macOS 15 调频已修复。分发二进制与 ZIP 保持原样，当前运行状态见 manifest 和审查说明。
+[dist/v0.5.0-sequoia](dist/v0.5.0-sequoia) 提供 `24H232` 专用控制版，二进制对应下述 Sequoia 短测，会实际改变频率请求。[观察版](dist/v0.5.0-sequoia-preview) 的控制路径编译禁用，已通过采样短测；原观察版二进制与 ZIP 保持不变，当前运行状态见各自 manifest 和审查说明。
 
 需要 Xcode、macOS Kernel.framework 头文件与 x86_64 交叉编译支持。0.5.0 使用 macOS 26.2 SDK，Sequoia 对象文件的部署目标为 15.0；本机已核对观察版全部外部符号可由固定 Sequoia 内核和 Lilu 提供。SDK 版本号本身不能证明运行兼容。固定版本的公开 Lilu SDK 和 MacKernelSDK 已放在 `vendor/`，许可随源码保留。
 
@@ -68,7 +68,7 @@ python3 build.py --target sequoia-24H232 --guarded-control
 
 此仓库不包含完整 EFI、个人 `config.plist` 或绑定某台机器的安装脚本。[fragments](fragments) 只提供 OpenCore `Kernel -> Add` 条目供审查，需要置于 Lilu 之后。
 
-Sequoia 观察版使用独立目录 `E5PStateMacSequoia.kext`，其 Add 条目的 `MinKernel`、`MaxKernel` 均为 `24.6.0`。它与原 26 版的注入范围必须互斥；相同 CFBundleIdentifier 的两份驱动不能在同一内核同时注入。内核范围检查之后仍有驱动内 UUID、指纹与 CPU 自检。
+Sequoia 构建使用独立目录 `E5PStateMacSequoia.kext`，其 Add 条目的 `MinKernel`、`MaxKernel` 均为 `24.6.0`。观察版和控制版使用同一位置，只能选择其中一个。它与原 26 版的注入范围必须互斥；相同 CFBundleIdentifier 的两份驱动不能在同一内核同时注入。内核范围检查之后仍有驱动内 UUID、指纹与 CPU 自检。
 
 自行测试前应先核对固定内核、CPU 和依赖，保留完整 EFI 备份及可用的恢复启动路径。优先验证观察模式，再评估控制模式。不要将本仓库的条目直接并入不匹配的系统，也不要覆盖整套 EFI。
 
@@ -96,6 +96,17 @@ python3 tests/run_tests.py --linux-reference /path/to/linux-6.8/drivers/cpufreq/
 ```
 
 这些测试验证算法、门控和静态目标，不等于运行安全或长期稳定性验证。
+
+## macOS 15 / 0.5.0 单机短测结果
+
+| 项目 | 结果 |
+|---|---|
+| 20 线程非 AVX 整数满载 | 各逻辑核新鲜高负载样本平均约 3.157–3.179 GHz，整体约 3.168 GHz |
+| powermetrics 核对 | 满载稳定窗口 14 个样本，20 逻辑核平均约 3.162–3.163 GHz |
+| 低负载降频 | 新鲜有效样本最低约 1.202 GHz，请求可降至 12 倍频 |
+| 分阶段测试 | 39,097 个新增有效样本；17,374 次覆盖全部读回成功；故障／回退为 0 |
+
+该轮实现的是接近原厂十核约 3.2 GHz 的动态运行，实测并非恒定 3.200 GHz。没有进行 Sequoia 的严格吞吐 A/B 或跑分对照，也不宣称与 Linux 的应用性能相同。见 [完整方法及边界](docs/sequoia-24H232.md)。
 
 ## macOS 26 / 0.4.0 单机短测结果
 

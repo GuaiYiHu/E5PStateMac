@@ -49,5 +49,5 @@ if shadow:
 print(json.dumps({'mach_o':'x86_64 KEXT_BUNDLE','simd_registers':0,'pm_dispatch_reregistration':False,
     'periodic_cross_cpu_rendezvous':False,'direct_wrmsr_instructions':len(re.findall(r'\bwrmsr\b',assembly)),
     'shadow_only':shadow,'guarded_control_build':guarded,'native_deadlines_unchanged':True,
-    'hardware_control_path':'Native writer passthrough only; extra writer and lock paths compiled out.' if shadow else 'Guarded native writer and local timer updates with request readback; not runtime validated.',
-    'runtime_tested':False},indent=2))
+    'hardware_control_path':'Native writer passthrough only; extra writer and lock paths compiled out.' if shadow else 'Guarded native writer and local timer updates with request readback.',
+    'runtime_tested_by_this_check':False},indent=2))
